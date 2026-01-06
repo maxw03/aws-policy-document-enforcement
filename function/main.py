@@ -100,21 +100,21 @@ def is_invalid(statements):
     for statement in statements:
         if statement['Effect'] == "Deny":
             continue
-                    if "AWS" not in statement.get('Principal', {}):
-                        continue
-                    aws_principals = statement['Principal']['AWS']
-                    if isinstance(aws_principals, str):
-                        aws_principals = [aws_principals]
-                    non_cloudfront_principals = [
-                        p for p in aws_principals
-                        if not p.startswith("arn:aws:iam::cloudfront:user")
-                    ]
-                    if not non_cloudfront_principals:
-                        continue
-                    if "Condition" not in statement or C_OPERATOR not in statement['Condition'] or C_KEY not in statement['Condition'][C_OPERATOR]:
+        if "AWS" not in statement.get('Principal', {}):
+            continue
+        aws_principals = statement['Principal']['AWS']
+        if isinstance(aws_principals, str):
+            aws_principals = [aws_principals]
+        non_cloudfront_principals = [
+            p for p in aws_principals
+            if not p.startswith("arn:aws:iam::cloudfront:user")
+        ]
+        if not non_cloudfront_principals:
+            continue
+        if "Condition" not in statement or C_OPERATOR not in statement['Condition'] or C_KEY not in statement['Condition'][C_OPERATOR]:
             return True
         key_values = statement['Condition'][C_OPERATOR][C_KEY]
-                if isinstance(key_values, str) and key_values != C_VALUE:
+        if isinstance(key_values, str) and key_values != C_VALUE:
             return True
         if isinstance(key_values, list) and C_VALUE not in key_values:
             return True
